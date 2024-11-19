@@ -1,1 +1,425 @@
 # JSON_Editor
+  CODE: 
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dynamic Form Generator</title>
+  <style>
+    /* General styles */
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f7f7f7;
+      color: #333;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background-color: #1e1e1e;
+      color: #ddd;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: brown;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    h2.dark {
+      color: #ff8800;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    @media (min-width: 1024px) {
+      .container {
+        flex-direction: row;
+      }
+    }
+
+    .editor, .form-preview {
+      flex: 1;
+      padding: 20px;
+      background-color: #fff;
+      overflow-y: auto;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .editor.dark, .form-preview.dark {
+      background-color: #2a2a2a;
+      box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    }
+
+    .editor {
+      border-right: 1px solid #ddd;
+    }
+
+    .editor.dark {
+      border-right: 1px solid #555;
+    }
+
+    #json-editor {
+      width: 100%;
+      height: 75%;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 10px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      background-color: #f9f9f9;
+      resize: none;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    #json-editor.dark {
+      background-color: #333;
+      color: #ddd;
+      border-color: #555;
+    }
+
+    #error-message {
+      color: #d9534f;
+      margin-top: 10px;
+      display: none;
+    }
+
+    #error-message.visible {
+      display: block;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    form label {
+      font-weight: bold;
+    }
+
+    form input, form textarea, form select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    form input:focus, form textarea:focus, form select:focus {
+      border-color: #007bff;
+      outline: none;
+    }
+
+    form button {
+      background-color: #007bff;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    form button:hover {
+      background-color: #0056b3;
+    }
+
+    .dark button {
+      background-color: #555;
+    }
+
+    #form-success {
+      color: #28a745;
+      font-weight: bold;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #form-success.visible {
+      display: block;
+    }
+
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .toolbar button {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .toolbar button:hover {
+      background-color: #ddd;
+    }
+
+    .dark .toolbar button {
+      background-color: #444;
+      color: white;
+    }
+
+    .dark .toolbar button:hover {
+      background-color: #555;
+    }
+    /* General button styles */
+button {
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+  background-color: #007bff;
+  color: white;
+}
+
+button:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+button:active {
+  background-color: #004085;
+  transform: scale(0.98);
+}
+
+/* Dark Mode button styling */
+.dark button {
+  background-color: #444;
+  color: white;
+  border: 1px solid #555;
+}
+
+.dark button:hover {
+  background-color: #555;
+}
+
+.dark button:active {
+  background-color: #333;
+}
+
+/* Specific button styles for the toolbar buttons */
+.toolbar button {
+  background-color: #28a745;
+  border: 1px solid #28a745;
+}
+
+.toolbar button:hover {
+  background-color: #218838;
+  transform: scale(1.05);
+}
+
+.toolbar button:active {
+  background-color: #1e7e34;
+  transform: scale(0.98);
+}
+
+/* Download button specific styling */
+#download-submission {
+  background-color: #ffc107;
+  color: #212529;
+  border: 1px solid #ffc107;
+}
+
+#download-submission:hover {
+  background-color: #e0a800;
+  transform: scale(1.05);
+}
+
+#download-submission:active {
+  background-color: #c69500;
+  transform: scale(0.98);
+}
+
+/* Copy JSON button styling */
+#copy-json {
+  background-color: #17a2b8;
+  border: 1px solid #17a2b8;
+}
+
+#copy-json:hover {
+  background-color: #138496;
+  transform: scale(1.05);
+}
+
+#copy-json:active {
+  background-color: #117a8b;
+  transform: scale(0.98);
+}
+
+/* Button styling for form submit */
+form button[type="submit"] {
+  background-color: #007bff;
+  color: white;
+  border: 1px solid #007bff;
+}
+
+form button[type="submit"]:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
+}
+
+form button[type="submit"]:active {
+  background-color: #004085;
+  transform: scale(0.98);
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- JSON Editor -->
+    <div class="editor" id="editor">
+      <h2>JSON EDITOR</h2>
+      <textarea id="json-editor" placeholder="Enter JSON schema here..."></textarea>
+      <p id="error-message" class="error-message"></p>
+      <div class="toolbar">
+        <button id="copy-json">Copy Form JSON</button>
+        <button id="toggle-dark-mode">Toggle Dark Mode</button>
+      </div>
+    </div>
+
+    <!-- Form Preview -->
+    <div class="form-preview" id="form-preview">
+      <h2>GENERATED FORM</h2>
+      <form id="dynamic-form">
+        <p>The form will be generated here.</p>
+      </form>
+      <div id="form-success">Form submitted successfully!</div>
+      <button id="download-submission" style="display: none;">Download Submission</button>
+    </div>
+  </div>
+
+  <script>
+    const editor = document.getElementById('json-editor');
+    const formContainer = document.getElementById('dynamic-form');
+    const errorMessage = document.getElementById('error-message');
+    const successMessage = document.getElementById('form-success');
+    const downloadButton = document.getElementById('download-submission');
+    const copyJsonButton = document.getElementById('copy-json');
+    const toggleDarkModeButton = document.getElementById('toggle-dark-mode');
+    const body = document.body;
+    const editorContainer = document.getElementById('editor');
+    const formPreview = document.getElementById('form-preview');
+
+    let currentFormData = {};
+
+    // Function to validate JSON
+    const validateJSON = (input) => {
+      try {
+        return JSON.parse(input);
+      } catch (e) {
+        return null;
+      }
+    };
+
+    // Function to create form elements
+    const generateForm = (schema) => {
+      formContainer.innerHTML = ''; // Clear previous form
+      currentFormData = {}; // Reset the form data on new schema
+
+      if (!schema.fields || !Array.isArray(schema.fields)) {
+        errorMessage.textContent = 'Schema must have a "fields" array.';
+        errorMessage.classList.add('visible');
+        return;
+      }
+
+      schema.fields.forEach((field) => {
+        const wrapper = document.createElement('div');
+
+        const label = document.createElement('label');
+        label.textContent = field.label;
+
+        let input;
+        if (field.type === 'textarea') {
+          input = document.createElement('textarea');
+        } else if (field.type === 'select') {
+          input = document.createElement('select');
+          if (field.options && Array.isArray(field.options)) {
+            field.options.forEach((option) => {
+              const optionElement = document.createElement('option');
+              optionElement.value = option;
+              optionElement.textContent = option;
+              input.appendChild(optionElement);
+            });
+          }
+        } else {
+          input = document.createElement('input');
+          input.type = field.type || 'text';
+        }
+
+        input.name = field.name;
+        input.required = field.required || false;
+
+        wrapper.appendChild(label);
+        wrapper.appendChild(input);
+        formContainer.appendChild(wrapper);
+      });
+
+      const submitButton = document.createElement('button');
+      submitButton.type = 'submit';
+      submitButton.textContent = 'Submit';
+      formContainer.appendChild(submitButton);
+    };
+
+    // Handle real-time updates
+    editor.addEventListener('input', () => {
+      const jsonInput = editor.value;
+      const schema = validateJSON(jsonInput);
+
+      if (schema) {
+        errorMessage.classList.remove('visible');
+        generateForm(schema);
+      } else {
+        errorMessage.textContent = 'Invalid JSON schema.';
+        errorMessage.classList.add('visible');
+      }
+    });
+
+    // Handle form submission
+    formContainer.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const formData = new FormData(formContainer);
+      currentFormData = Object.fromEntries(formData.entries());
+      successMessage.classList.add('visible');
+      downloadButton.style.display = 'block';
+      setTimeout(() => successMessage.classList.remove('visible'), 3000);
+    });
+
+    // Copy JSON to clipboard
+    copyJsonButton.addEventListener('click', () => {
+      navigator.clipboard.writeText(editor.value).then(() => {
+        alert('JSON copied to clipboard!');
+      });
+    });
+
+    // Toggle dark mode
+    toggleDarkModeButton.addEventListener('click', () => {
+      body.classList.toggle('dark');
+      editorContainer.classList.toggle('dark');
+      formPreview.classList.toggle('dark');
+    });
+
+    // Download form submission
+    downloadButton.addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(currentFormData, null, 2)], { type: 'application/json' });
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(blob);
+      link.download = 'form-submission.json';
+      link.click();
+    });
+  </script>
+</body>
+</html>
