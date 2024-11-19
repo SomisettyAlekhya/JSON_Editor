@@ -1,0 +1,41 @@
+{
+  "fields": [
+    {
+      "label": "Full Name",
+      "type": "text",
+      "name": "fullName",
+      "required": true
+    },
+    {
+      "label": "Email Address",
+      "type": "email",
+      "name": "email",
+      "required": true
+    },
+    {
+      "label": "Age",
+      "type": "number",
+      "name": "age",
+      "required": true
+    },
+    {
+      "label": "Gender",
+      "type": "select",
+      "name": "gender",
+      "options": ["Male", "Female", "Other"],
+      "required": true
+    },
+    {
+      "label": "Bio",
+      "type": "textarea",
+      "name": "bio",
+      "required": false
+    },
+    {
+      "label": "Subscribe to Newsletter",
+      "type": "checkbox",
+      "name": "subscribe",
+      "required": false
+    }
+  ]
+}
